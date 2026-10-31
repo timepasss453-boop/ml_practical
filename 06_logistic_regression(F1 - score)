@@ -5,20 +5,19 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, precision_score
+from sklearn.metrics import recall_score, f1_score
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 
 # Load dataset
-data = pd.read_csv(r"Downloads\california_housing (1).csv")
+data = pd.read_csv(r"Downloads\Social_Network_Ads (1).csv")
 
-# Convert house values into binary classes
-median_value = data["MedHouseVal"].median()
-
-data["HouseCategory"] = (data["MedHouseVal"] > median_value).astype(int)
+# Convert Gender into numerical values
+data["Gender"] = data["Gender"].map({"Male": 0, "Female": 1})
 
 # Separate input and output
-X = data.drop(["MedHouseVal", "HouseCategory"], axis=1)
-y = data["HouseCategory"]
+X = data.drop(["User ID", "Purchased"], axis=1)
+y = data["Purchased"]
 
 # Split dataset
 X_train, X_test, y_train, y_test = train_test_split(
@@ -31,7 +30,7 @@ X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 # Create Logistic Regression model
-model = LogisticRegression(max_iter=1000)
+model = LogisticRegression()
 
 # Train model
 model.fit(X_train, y_train)
@@ -39,22 +38,22 @@ model.fit(X_train, y_train)
 # Prediction
 y_pred = model.predict(X_test)
 
-# Confusion Matrix
-cm = confusion_matrix(y_test, y_pred)
-
-print("Confusion Matrix:")
-print(cm)
-
 # Evaluation metrics
-print("\nAccuracy:", accuracy_score(y_test, y_pred))
+print("Accuracy:", accuracy_score(y_test, y_pred))
 print("Precision:", precision_score(y_test, y_pred))
 print("Recall:", recall_score(y_test, y_pred))
 print("F1 Score:", f1_score(y_test, y_pred))
 
+# Confusion Matrix
+cm = confusion_matrix(y_test, y_pred)
+
+print("\nConfusion Matrix:")
+print(cm)
+
 # Display confusion matrix
 disp = ConfusionMatrixDisplay(
     confusion_matrix=cm,
-    display_labels=["Low Value", "High Value"]
+    display_labels=["Not Purchased", "Purchased"]
 )
 
 disp.plot(cmap="Blues")
