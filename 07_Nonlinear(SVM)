@@ -1,0 +1,67 @@
+# Import libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, precision_score
+from sklearn.metrics import recall_score, f1_score
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+
+# Load dataset
+data = pd.read_csv(r"Downloads\california_housing (1).csv")
+
+# Convert house values into binary classes
+median_value = data["MedHouseVal"].median()
+data["HouseCategory"] = (data["MedHouseVal"] > median_value).astype(int)
+
+# Separate input and output
+X = data.drop(["MedHouseVal", "HouseCategory"], axis=1)
+y = data["HouseCategory"]
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# Feature scaling
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Linear Kernel Model
+linear_model = SVC(kernel='linear')
+linear_model.fit(X_train, y_train)
+linear_pred = linear_model.predict(X_test)
+
+# Nonlinear RBF Kernel Model
+rbf_model = SVC(kernel='rbf')
+rbf_model.fit(X_train, y_train)
+rbf_pred = rbf_model.predict(X_test)
+
+# Compare performance
+print("Linear Kernel Performance")
+print("Accuracy:", accuracy_score(y_test, linear_pred))
+print("Precision:", precision_score(y_test, linear_pred))
+print("Recall:", recall_score(y_test, linear_pred))
+print("F1 Score:", f1_score(y_test, linear_pred))
+
+print("\nNonlinear RBF Kernel Performance")
+print("Accuracy:", accuracy_score(y_test, rbf_pred))
+print("Precision:", precision_score(y_test, rbf_pred))
+print("Recall:", recall_score(y_test, rbf_pred))
+print("F1 Score:", f1_score(y_test, rbf_pred))
+
+# Confusion Matrix for RBF Kernel
+cm = confusion_matrix(y_test, rbf_pred)
+print("\nRBF Confusion Matrix:")
+print(cm)
+
+disp = ConfusionMatrixDisplay(
+    confusion_matrix=cm,
+    display_labels=["Low Value", "High Value"]
+)
+disp.plot(cmap="Blues")
+plt.title("SVM - Nonlinear RBF Kernel")
+plt.show()
