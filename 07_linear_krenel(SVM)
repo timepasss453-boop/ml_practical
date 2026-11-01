@@ -1,4 +1,4 @@
-# Import libraries
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -9,43 +9,42 @@ from sklearn.metrics import accuracy_score, precision_score
 from sklearn.metrics import recall_score, f1_score
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
-# Load dataset
+
 data = pd.read_csv(r"Downloads\california_housing (1).csv")
 
-# Convert house values into binary classes
+
 median_value = data["MedHouseVal"].median()
 data["HouseCategory"] = (data["MedHouseVal"] > median_value).astype(int)
 
-# Separate input and output
+
 X = data.drop(["MedHouseVal", "HouseCategory"], axis=1)
 y = data["HouseCategory"]
 
-# Split dataset
+
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# Feature scaling
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
-# Create SVM model using Linear Kernel
+
 model = SVC(kernel='linear')
 
-# Train model
+
 model.fit(X_train, y_train)
 
-# Prediction
+
 y_pred = model.predict(X_test)
 
-# Evaluation
+
 print("Accuracy:", accuracy_score(y_test, y_pred))
 print("Precision:", precision_score(y_test, y_pred))
 print("Recall:", recall_score(y_test, y_pred))
 print("F1 Score:", f1_score(y_test, y_pred))
 
-# Confusion Matrix
+
 cm = confusion_matrix(y_test, y_pred)
 print("\nConfusion Matrix:")
 print(cm)
