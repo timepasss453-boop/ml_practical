@@ -1,0 +1,61 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+df = pd.read_csv(r"Downloads\breast_cancer_wisconsin.csv")
+
+print(df.head())
+
+X = df.drop('target', axis=1)
+y = df['target']
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+lr = LogisticRegression(max_iter=5000)
+lr.fit(X_train, y_train)
+
+y_pred_lr = lr.predict(X_test)
+
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf.fit(X_train, y_train)
+
+y_pred_rf = rf.predict(X_test)
+
+print("Logistic Regression Performance")
+print("Accuracy:", accuracy_score(y_test, y_pred_lr))
+print("Precision:", precision_score(y_test, y_pred_lr))
+print("Recall:", recall_score(y_test, y_pred_lr))
+print("F1 Score:", f1_score(y_test, y_pred_lr))
+
+print("\nRandom Forest Performance")
+print("Accuracy:", accuracy_score(y_test, y_pred_rf))
+print("Precision:", precision_score(y_test, y_pred_rf))
+print("Recall:", recall_score(y_test, y_pred_rf))
+print("F1 Score:", f1_score(y_test, y_pred_rf))
+
+results = pd.DataFrame({
+    'Model': ['Logistic Regression', 'Random Forest'],
+    'Accuracy': [
+        accuracy_score(y_test, y_pred_lr),
+        accuracy_score(y_test, y_pred_rf)
+    ],
+    'Precision': [
+        precision_score(y_test, y_pred_lr),
+        precision_score(y_test, y_pred_rf)
+    ],
+    'Recall': [
+        recall_score(y_test, y_pred_lr),
+        recall_score(y_test, y_pred_rf)
+    ],
+    'F1 Score': [
+        f1_score(y_test, y_pred_lr),
+        f1_score(y_test, y_pred_rf)
+    ]
+})
+
+print("\nModel Comparison")
+print(results)
