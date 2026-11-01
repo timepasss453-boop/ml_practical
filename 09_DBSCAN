@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 from sklearn.preprocessing import StandardScaler
 
-df = pd.read_csv(r"Downloads\Mall_Customers.csv")
+df = pd.read_csv(r"Downloads\make_moons.csv")
 
 print(df.head())
 
-X = df[['Annual Income (k$)', 'Spending Score (1-100)']]
+X = df[['Feature_1', 'Feature_2']]
 
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
@@ -18,15 +18,15 @@ df['Cluster'] = dbscan.fit_predict(X_scaled)
 
 print(df.head())
 
-plt.scatter(X['Annual Income (k$)'], X['Spending Score (1-100)'], c=df['Cluster'], cmap='rainbow')
+plt.scatter(df['Feature_1'], df['Feature_2'], c=df['Cluster'], cmap='rainbow')
 
-plt.xlabel('Annual Income')
-plt.ylabel('Spending Score')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
 plt.title('DBSCAN Clustering')
 plt.show()
 
 print("Cluster Counts:")
 print(df['Cluster'].value_counts())
 
-print("Noise Points:")
+print("Number of Noise Points:")
 print((df['Cluster'] == -1).sum())
