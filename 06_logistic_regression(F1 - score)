@@ -1,4 +1,4 @@
-# Import libraries
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -9,48 +9,47 @@ from sklearn.metrics import accuracy_score, precision_score
 from sklearn.metrics import recall_score, f1_score
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
-# Load dataset
+
 data = pd.read_csv(r"Downloads\Social_Network_Ads (1).csv")
 
-# Convert Gender into numerical values
+
 data["Gender"] = data["Gender"].map({"Male": 0, "Female": 1})
 
-# Separate input and output
+
 X = data.drop(["User ID", "Purchased"], axis=1)
 y = data["Purchased"]
 
-# Split dataset
+
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# Feature scaling
+
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
-# Create Logistic Regression model
 model = LogisticRegression()
 
-# Train model
+
 model.fit(X_train, y_train)
 
-# Prediction
+
 y_pred = model.predict(X_test)
 
-# Evaluation metrics
+
 print("Accuracy:", accuracy_score(y_test, y_pred))
 print("Precision:", precision_score(y_test, y_pred))
 print("Recall:", recall_score(y_test, y_pred))
 print("F1 Score:", f1_score(y_test, y_pred))
 
-# Confusion Matrix
+
 cm = confusion_matrix(y_test, y_pred)
 
 print("\nConfusion Matrix:")
 print(cm)
 
-# Display confusion matrix
+
 disp = ConfusionMatrixDisplay(
     confusion_matrix=cm,
     display_labels=["Not Purchased", "Purchased"]
